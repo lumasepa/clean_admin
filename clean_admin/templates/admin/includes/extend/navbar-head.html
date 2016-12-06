@@ -1,0 +1,21 @@
+ {% load apps %}
+ {% get_apps as app_list %}
+ {% for app in app_list %}
+   <li class="dropdown {% if app.app_label == opts.app_label %}active{% endif %}">
+        <a data-toggle="dropdown" data-target="#" id="{{ app.app_label }}-dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-chevron-down fa-fw"></i>
+            {{ app.name }}
+        </a>
+        <ul aria-labelledby="{{ app.app_label }}-dropdown" class="dropdown-menu">
+             {% for model in app.models %}
+                {% if model.admin_url %}
+                    <li>
+                        <a href="{{ model.admin_url }}">
+                            <i class="fa {{ model.icon }}"></i> {{ model.name }}
+                        </a>
+                    </li>
+                {% endif %}
+             {% endfor %}
+        </ul>
+    </li>
+{% endfor %}

@@ -1,0 +1,134 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls admin_static admin_list %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <!--<link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}" /> -->
+  {% if cl.formset %}
+    <!-- <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" /> -->
+  {% endif %}
+  {% if cl.formset or action_form %}
+    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+  {% endif %}
+  {{ media.css }}
+  {% if not actions_on_top and not actions_on_bottom %}
+    <style>
+      #changelist table thead th:first-child {width: inherit}
+    </style>
+  {% endif %}
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {{ media.js }}
+
+    {% if action_form %}{% if actions_on_top or actions_on_bottom %}
+    <script type="text/javascript">
+    (function($) {
+        $(document).ready(function($) {
+            $("tr input.action-select").actions();
+        });
+    })(django.jQuery);
+    </script>
+    {% endif %}{% endif %}
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-list{% endblock %}
+
+{% if not is_popup %}
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+<li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a></li>
+    <li><a href="{% url 'admin:app_list' app_label=cl.opts.app_label %}">{{ cl.opts.app_config.verbose_name }}</a></li>
+        <li>{{ cl.opts.verbose_name_plural|capfirst }}</li>
+</ul>
+{% endblock %}
+{% endif %}
+
+{% block sidebar %}
+      {% block filters %}
+        {% if cl.has_filters %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-filter"></i> {% trans 'Filter' %} </h3>
+                </div>
+                <div class="panel-body">
+                    <div id="changelist-filter">
+                        <ul class="nav nav-pills nav-stacked">
+                            {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+      {% endblock %}
+{% endblock %}
+
+{% block object-tools %}
+      {% if has_add_permission %}
+          <script>
+            function window_on_load_event(func) {
+                // assign any pre-defined functions on 'window.onload' to a variable
+                var oldOnLoad = window.onload;
+                // if there is not any function hooked to it
+                if (typeof window.onload != 'function') {
+                    // you can hook your function with it
+                    window.onload = func
+                } else { // someone already hooked a function
+                    window.onload = function () {
+                        // call the function hooked already
+                        oldOnLoad();
+                        // call your awesome function
+                        func();
+                    }
+                }
+            }
+
+            window_on_load_event(function() {
+                        ul = document.getElementById("object-tools-ul");
+                        for (var a of ul.getElementsByTagName("a")) {
+                            a.className += " btn btn-default";
+                        }
+                    }
+            );
+          </script>
+        <ul id="object-tools-ul" class="object-tools list-inline pull-right">
+          {% block object-tools-items %}
+              <li>
+              {% url cl.opts|admin_urlname:'add' as add_url %}
+              <a href="{% add_preserved_filters add_url is_popup to_field %}" class="addlink">
+                {% blocktrans with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}
+              </a>
+            </li>
+          {% endblock %}
+        </ul>
+      {% endif %}
+{% endblock %}
+
+{% block content %}
+  <div id="content-main">
+    {% if cl.formset.errors %}
+        <p class="errornote">
+        {% if cl.formset.total_error_count == 1 %}{% trans "Please correct the error below." %}{% else %}{% trans "Please correct the errors below." %}{% endif %}
+        </p>
+        {{ cl.formset.non_form_errors }}
+    {% endif %}
+    <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
+
+      {% block search %}{% search_form cl %}{% endblock %}
+      {% block date_hierarchy %}{% date_hierarchy cl %}{% endblock %}
+        <br/>
+      <form class="form-inline" id="changelist-form" action="" method="post"{% if cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>{% csrf_token %}
+      {% if cl.formset %}
+        <div>{{ cl.formset.management_form }}</div>
+      {% endif %}
+      {% block result_list %}
+          {% if action_form and actions_on_top and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+          {% result_list cl %}
+          {% if action_form and actions_on_bottom and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+      {% endblock %}
+      {% block pagination %}{% pagination cl %}{% endblock %}
+      </form>
+    </div>
+  </div>
+{% endblock %}

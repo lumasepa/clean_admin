@@ -1,0 +1,32 @@
+{% load clean_admin_utils %}
+{% if fieldset.name %}
+    <legend>
+        {% if 'collapse' in fieldset.classes %}
+            {{ fieldset.name }}
+            <a class="btn" data-toggle="collapse" data-target="#fieldset-{% if stacked_prefix %}{{ stacked_prefix }}-{% endif %}{{ forloop.counter }}">
+                <i class="fa fa-chevron-down"></i>
+            </a>
+        {% else %}
+        {{ fieldset.name }}
+        {% endif %}
+    </legend>
+{% endif %}
+<fieldset class="module aligned {{ fieldset.classes }}" id="fieldset-{% if stacked_prefix %}{{ stacked_prefix }}-{% endif %}{{ forloop.counter }}">
+  {% if fieldset.description %}
+    <div class="description">{{ fieldset.description|safe }}</div>
+  {% endif %}
+  {% for line in fieldset %}
+    {% if not line.fields|length_is:'1' %}
+      <div class="field-boxes row">
+        {% for field in line %}
+          {% include "admin/includes/field.html" with line=line css_field_box=line|class_for_field_boxes %}
+        {% endfor %}
+      </div>
+    {% else %}
+      {% for field in line %}
+        {% include "admin/includes/field.html" with line=line %}
+      {% endfor %}
+    {% endif %}
+  {% endfor %}
+</fieldset>
+

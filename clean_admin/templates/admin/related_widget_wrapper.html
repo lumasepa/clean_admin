@@ -1,0 +1,40 @@
+{% load i18n admin_static clean_admin_utils %}
+<div class="related-widget-wrapper">
+    <div class="row">
+    <div class="col-md-11">
+        {{ widget }}
+    </div>
+    {% block links %}
+        <div class="col-md-1">
+        <div class="btn-group {% if widget_type != "filteredselectmultiple" %}{% endif %}" style="padding-bottom: 10px">
+
+            {% comment %}
+            {% if can_change_related %}
+                <a class="btn btn-primary" id="change_id_{{ name }}"
+                data-href-template="{{ change_related_template_url }}?{{ url_params }}"
+                title="{% blocktrans %}Change selected {{ model }}{% endblocktrans %}" onclick="return showRelatedObjectPopup(this);">
+                <i class="fa fa-pencil"></i>
+                </a>
+            {% endif %}
+            {% endcomment %}
+            {% if can_add_related %}
+                <a class="btn btn-success" id="add_id_{{ name }}"
+                    href="{{ add_related_url }}?{{ url_params }}"
+                    title="{% blocktrans %}Add another {{ model }}{% endblocktrans %}"onclick="return showAddAnotherPopup(this);" >
+                    <i class="fa fa-plus"></i>
+                </a>
+            {% endif %}
+            {% comment %}
+            {% if can_delete_related %}
+                <a class="btn btn-danger" id="delete_id_{{ name }}"
+                    data-href-template="{{ delete_related_template_url }}?{{ url_params }}"
+                    title="{% blocktrans %}Delete selected {{ model }}{% endblocktrans %}">
+                    <i class="fa fa-trash"></i>
+                </a>
+            {% endif %}
+            {% endcomment %}
+        </div>
+    {% endblock %}
+        </div>
+        </div>
+</div>

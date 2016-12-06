@@ -1,0 +1,33 @@
+{% load i18n %}
+<div class="panel panel-default panel-ull color-7A3B7A">
+    <div class="panel-heading">
+        {% block history_header %}<a href="{% url "actions_history" %}"><h3 class="panel-title", style="color: white !important;"><i class="fa fa-history"></i> {% trans 'Recent Actions' %} </h3></a>{% endblock %}
+    </div>
+    <div class="panel-body">
+        <ul class="nav nav-pills nav-stacked">
+            {% load log %}
+            {% get_admin_log 10 as admin_log for_user user %}
+            {% if not admin_log %}
+                    <li>{% trans 'None available' %}</li>
+            {% else %}
+                {% for entry in admin_log %}
+                    <li>
+                        {% if not entry.is_deletion and entry.get_admin_url %}
+                             <a href="{{ entry.get_admin_url }}">
+                        {% endif %}
+                        <i class="fa {% if entry.is_addition %}fa-plus{% endif %}{% if entry.is_change %}fa-pencil{% endif %}{% if entry.is_deletion %}fa-times{% endif %}"></i>
+                            {{ entry.object_repr }}
+                            {% if entry.content_type %}
+                                {% filter capfirst %}{{ entry.content_type }}{% endfilter %}
+                            {% else %}
+                                {% trans 'Unknown content' %}
+                            {% endif %}
+                        {% if not entry.is_deletion and entry.get_admin_url %}
+                             </a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+</div>

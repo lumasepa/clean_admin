@@ -1,0 +1,64 @@
+
+.panel-default > .panel-heading {
+    background-color: #006622;
+    background-color: #1a1a1a;
+    color: #fff;
+}
+
+.navbar-inverse {
+  background-color: #006622;
+  background-color: #1a1a1a;
+
+}
+
+.navbar-inverse .navbar-brand {
+  color: white;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+  color: white;
+}
+
+.panel-default > .panel-heading .panel-title {
+  color: white;
+}
+
+.navbar {
+  border-radius: 0;
+}
+
+.section .nav.header li{
+  margin-right:4px;
+  border-radius:2px;
+  border:solid 1px #DDD;
+  border-bottom-color:#fff;
+  color:#005522;
+  color:#1a1a1a;
+  padding:8px 10px;
+  font-weight:700
+}
+
+.section .content{
+   border:solid 1px #DDD;
+   border-top:0;
+   padding:12px
+ }
+
+.navbar-inverse .navbar-nav > li > a:hover {
+  background-color: #004623;
+  background-color: #373737;
+}
+
+.nav .nav-pills .nav-stacked > li > a > i {
+  color: #1a1a1a;
+}
+
+.selector {
+  width: 100%;
+  padding:12px;
+  border:solid 1px #DDD;
+}
+
+.selector-filter {
+   border:solid 1px #DDD;
+}

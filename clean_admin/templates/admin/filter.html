@@ -1,0 +1,17 @@
+{% load i18n %}
+<li>
+    <a data-toggle="collapse" href="#{{ title|slugify }}-collapse">
+    <i class="fa fa-filter"></i>
+    {% blocktrans with filter_title=title %} By {{ title }} {% endblocktrans %}
+    </a>
+    <div id="{{ title|slugify }}-collapse" class="panel-collapse collapse">
+        <div style="padding-left: 10%">
+            <ul class="nav nav-pills nav-stacked">
+                {% for choice in choices %}
+                    <li{% if choice.selected %} class="active"{% endif %}>
+                    <a href="{{ choice.query_string|iriencode }}">{{ choice.display }}</a></li>
+                {% endfor %}
+             </ul>
+        </div>
+    </div>
+</li>

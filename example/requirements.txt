@@ -1,0 +1,8 @@
+django<1.10
+pillow
+django-debug-toolbar
+django-template-debug
+django-nested-admin
+django-admin-sortable
+django-adminactions
+# Additional requirements go here

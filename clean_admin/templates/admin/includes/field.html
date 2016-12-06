@@ -1,0 +1,107 @@
+{% load clean_admin_utils %}
+<div class="form-row form-group{% if line.fields|length_is:'1' and line.errors %} has-error{% endif %}{% if not line.has_visible_field %} hidden{% endif %}{% for field in line %}{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% endfor %}{% if not line.fields|length_is:'1' %} field-box {{ css_field_box }}{% endif %}">
+    {% if field.is_checkbox %}
+        {% if not is_tabular %}
+           <div class="row">
+                <label class="control-label col-md-6">{{ field.field.label }}</label>
+                <div class="col-md-6">
+                    <div class="checkbox">
+                    {{ field.field }}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+          {{ field.field }}
+        {% endif %}
+
+        {% for error in field.field.errors %}
+          <p class="help-block error">{{ error }}</p>
+        {% endfor %}
+
+        {% if field.field.help_text %}
+          <p class="help-block">
+            {{ field.field.help_text|safe }}
+          </p>
+        {% endif %}
+    {% else %}
+      {% with field.field|widget_type as widget_type %}
+          <div class="form-group">
+            <div class="widget_type__{{ widget_type }}">
+              {% if widget_type == 'adminsplitdatetime' %}
+                    {% if not is_tabular %}
+                      {{ field.label_tag }}
+                    {% endif %}
+                    {% if field.is_readonly %}
+                      <p>{{ field.contents|linebreaksbr }}</p>
+                    {% else %}
+                      {{ field.field }}
+                    {% endif %}
+
+                    {% for error in field.field.errors %}
+                      <p class="help-block error">{{ error }}</p>
+                    {% endfor %}
+
+                    {% if field.field.help_text %}
+                      <p class="help-block">
+                        {{ field.field.help_text|safe }}
+                      </p>
+                    {% endif %}
+              {% elif widget_type == "filteredselectmultiple" %}
+                    <div class="section">
+                        {% if not field.field.is_hidden %}
+                              {% if not is_tabular %}
+                                  <ul class="nav nav-tabs header">
+                                      <li class="active">{{ field.label_tag }}</li>
+                                  </ul>
+                              {% endif %}
+                        {% endif %}
+                        <div class="content">
+                              {% if field.is_readonly %}
+                                  <p>{{ field.contents|linebreaksbr }}</p>
+                              {% else %}
+                                  {{ field.field|add_class:"form-control" }}
+                              {% endif %}
+
+                              {% for error in field.field.errors %}
+                                <p class="help-block error">{{ error }}</p>
+                              {% endfor %}
+
+                              {% if field.field.help_text %}
+                                <p class="help-block">
+                                  {{ field.field.help_text|safe }}
+                                </p>
+                              {% endif %}
+                        </div>
+                  </div>
+              {% else %}
+                {# only show the label for visible fields #}
+                {% if not field.field.is_hidden %}
+                  {% if not is_tabular %}
+                    {{ field.label_tag }}
+                  {% endif %}
+                {% endif %}
+                  {% if field.is_readonly %}
+                    <p>{{ field.contents|linebreaksbr }}</p>
+                  {% else %}
+                    {% if widget_type == 'adminradioselect' or widget_type == 'checkboxselectmultiple' or widget_type == 'readonlypasswordhashwidget' or widget_type == 'adminfilewidget' %}
+                      {{ field.field }}
+                    {% else %}
+                      {{ field.field|add_class:"form-control" }}
+                    {% endif %}
+                  {% endif %}
+
+                  {% for error in field.field.errors %}
+                    <p class="help-block error">{{ error }}</p>
+                  {% endfor %}
+
+                  {% if field.field.help_text %}
+                    <p class="help-block">
+                      {{ field.field.help_text|safe }}
+                    </p>
+                  {% endif %}
+              {% endif %}
+            </div>
+          </div>
+      {% endwith %}
+    {% endif %}
+</div>

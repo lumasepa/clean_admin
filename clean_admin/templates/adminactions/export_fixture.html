@@ -1,0 +1,38 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_modify admin_urls bootstrap3 %}{% load url from aa_compat %}
+
+{% block breadcrumbs %}{% if not is_popup %}
+    <div class="breadcrumbs">
+        <a href="../../">{% trans "Home" %}</a> &rsaquo;
+        <a href="../">{{ app_label|capfirst|escape }}</a> &rsaquo;
+        <a href=".">{{ opts.verbose_name_plural|capfirst }}</a> &rsaquo;
+        Fixture Export Options
+    </div>
+{% endif %}{% endblock %}
+
+{% block content %}
+    <div class="section">
+      <ul class="nav nav-tabs header">
+        <li class="active">Export as fixture</li>
+      </ul>
+      <div class="content">
+        {% if adminform.form.subject.errors %}
+            <div class="alert alert-danger">
+                {% for error in adminform.form.subject.errors %}
+                    {{ error|escape }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {{ data }}
+        <div id='form'>
+            <form method="post">
+                {% csrf_token %}
+                <table>
+                    {% bootstrap_form adminform.form %}
+                </table>
+                <input class="btn btn-primary" type="submit" name="apply" value="Export"/>
+            </form>
+        </div>
+    </div>
+      </div>
+{% endblock %}

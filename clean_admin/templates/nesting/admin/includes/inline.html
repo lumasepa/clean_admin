@@ -1,0 +1,32 @@
+{% load clean_admin_utils %}
+{% spaceless %}
+    <fieldset class="module aligned djn-module {{ fieldset.classes }}">
+        {% if fieldset.name %}<h4 class="collapse-handler">{{ fieldset.name }}</h4>{% endif %}
+        {% if fieldset.description %}<div class=""><p class="description">{{ fieldset.description|safe }}</p></div>{% endif %}
+        {% for line in fieldset %}
+            <div class="form-group {% for field in line %} {{ field.field.name }}{% if field.field.is_hidden %} is-hidden{% endif %}{% endfor %} ">
+                {% for field in line %}
+                    {# <div{% if not line.fields|length_is:"1" %} class="cell {{ field.field.name }}{% if field.errors %} error{% endif %}"{% endif %}> #}
+                    <div class="field-box {% if line.fields|length_is:"1" %} cell {{ field.field.name }}{% endif %}">
+                        {% if field.is_checkbox %}
+                            <label>{{ field.label_tag }}</label> {{ field.field|add_class:"form-control" }}
+                        {% else %}
+                            <label>{{ field.label_tag }}</label>
+
+                                {% if field.is_readonly %}
+                                    <p class="readonly">{{ field.contents }}</p>
+                                {% else %}
+                                    {{ field.field|add_class:"form-control" }}
+                                {% endif %}
+                        {% endif %}
+                            {% if line.fields|length_is:'1' %}{{ line.errors }}{% endif %}
+                            {% if not line.fields|length_is:'1' and not field.is_readonly %}{{ field.errors }}{% endif %}
+                            {% if field.field.field.help_text %}
+                                <p class="help">{{ field.field.field.help_text|safe }}</p>
+                            {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </fieldset>
+{% endspaceless %}

@@ -1,0 +1,16 @@
+{% extends "admin/change_form.html" %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+  {% for tool in objectactions %}
+      <a role="btn" class="btn btn-default" href='{% url tools_view_name pk=object_id tool=tool.name %}' title="{{ tool.standard_attrs.title }}"
+         {% for k, v in tool.custom_attrs.items %}
+           {{ k }}="{{ v }}"
+         {% endfor %}
+         class="{{ tool.standard_attrs.class }}">
+      {{ tool.label|capfirst }}
+      </a>
+  {% endfor %}
+
+{% endblock %}
+

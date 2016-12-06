@@ -1,0 +1,114 @@
+{% load i18n admin_static %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+<title>{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}</title>
+        <link href="{% static  "admin/css/bootstrap.css" %}" rel="stylesheet">
+        <link href="{% static  "admin/css/clean_admin.css" %}" rel="stylesheet">
+        <link href="{% static  "admin/css/font-awesome.css" %}" rel="stylesheet">
+        <script src="{% static  "admin/js/jquery.js"%}"></script>
+        <script src="{% static  "admin/js/bootstrap.js"%}"></script>
+{% block extrastyle %}{% endblock %}
+
+<script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";</script>
+<script type="text/javascript">window.__admin_utc_offset__ = "{% filter escapejs %}{% now "Z" %}{% endfilter %}";</script>
+
+    {% block extrahead %}{% endblock %}
+
+    {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+</head>
+{% load i18n %}
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
+
+<!-- Container -->
+<div id="container">
+
+    {% if not is_popup %}
+    <!-- Header -->
+         <nav class="navbar navbar-inverse">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand" href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a>
+            </div>
+            <ul class="nav navbar-nav">
+                {% block navbar-head %}{% endblock %}
+                {% include "admin/includes/extend/navbar-head.html" %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'admin:logout' %}"><span class="fa fa-sign-out"></span>{% trans "Sign Out" %}</a></li>
+                {% else %}
+                    <li><a href="{% url "admin:login" %}"><span class="fa fa-sign-in"></span>{% trans "Login" %}</a></li>
+                {% endif %}
+            </ul>
+          </div>
+        </nav>
+        <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                 {% block breadcrumbs %}
+                    <ul class="breadcrumb">
+                    <li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+                    {% if title %} &rsaquo; {{ title }}{% endif %}</li>
+                    </ul>
+                {% endblock %}
+            </div>
+        </div>
+    {% endif %}
+{% block base %}
+{% if is_popup %}<div class="container-fluid">{% endif %}
+    <div class="row">
+    <div class="{% if not is_popup %}col-md-9 col-md-push-3{% else %}col-md-12{% endif %}" role="main">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    {% block messages %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div {% if message.tags %} class="alert {% if message.tags == "info" %}
+                                                                        alert-info
+                                                                        {% endif %}{% if message.tags == "success" %}
+                                                                        alert-success
+                                                                        {% endif %}{% if message.tags == "warning" %}
+                                                                        alert-warning
+                                                                        {% endif %}{% if message.tags == "error" %}
+                                                                        alert-danger
+                                                                        {% endif %}{% if message.tags == "debug" %}
+                                                                        alert-info
+                                                                        {% endif %}
+                                                                        "{% endif %}>
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endblock messages %}
+                <div class="section">
+                        {% block main %}
+                            {% block pretitle %}{% endblock %}
+                            {% block content_title %}{% endblock %}
+                            <div class="row">
+                                {% block object-tools %}{% endblock %}
+                            </div>
+                            <div class="row">
+                                {% block content %}
+                                {{ content }}
+                                {% endblock %}
+                            </div>
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        <div style="height: 70px;"></div>
+        </div>
+    </div>
+    {% if user.is_staff %}
+    {% block sidebar_base %}{% endblock %}
+    {% endif %}
+    </div>
+    {% if is_popup %}</div>{% endif %}
+    {% endblock %}
+    {% block footer %}{% endblock %}
+<!-- END Container -->
+</body>
+</html>

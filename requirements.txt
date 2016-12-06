@@ -1,0 +1,5 @@
+django<1.10
+six
+django-reversion
+django-reversion-compare
+django-ganalytics

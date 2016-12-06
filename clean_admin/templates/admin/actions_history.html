@@ -1,0 +1,87 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls admin_static admin_list %}
+
+{% block content %}
+    <div class="flex" id="content">
+        <h1>Actions History</h1>
+        <div id="changelist" class="module filtered">
+            <div id="content-main">
+                <div class="results">
+                    <table class="table-bordered table" id="result_list">
+                        <thead>
+                            <tr>
+                                 <th scope="col">
+                                    <div class="text">Action</div>
+                                    <div class="clear"></div>
+                                </th>
+                                <th scope="col">
+                                    <div class="text">Content Type</div>
+                                    <div class="clear"></div>
+                                </th>
+                                <th scope="col">
+                                   <div class="text"><span>Object</span></div>
+                                    <div class="clear"></div>
+                                </th>
+                                <th scope="col">
+                                   <div class="text"><span>Date</span></div>
+                                    <div class="clear"></div>
+                                </th>
+                                <th scope="col">
+                                   <div class="text"><span>User</span></div>
+                                   <div class="clear"></div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in actions_history_list %}
+                                <tr class="row{% cycle '1' '2' %}">
+                                    <td>
+                                        <i class="fa {% if entry.is_addition %}fa-plus{% endif %}{% if entry.is_change %}fa-pencil{% endif %}{% if entry.is_deletion %}fa-remove{% endif %}"></i>
+                                    </td>
+                                    <td>
+                                        {% if entry.content_type %}
+                                            {% trans entry.content_type.name %}
+                                        {% else %}
+                                            {% trans 'Unknown content' %}
+                                        {% endif %}
+                                    </td>
+                                    {% if entry.is_deletion or not entry.get_admin_url or not entry.get_edited_object %}
+                                        <td>
+                                            {{ entry.object_repr }}
+                                        </td>
+                                     {% else %}
+                                        <td>
+                                            <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                                        </td>
+                                    {% endif %}
+                                    <td>
+                                        {{ entry.action_time }}
+                                    </td>
+                                    <td>
+                                        {{ entry.user }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if is_paginated %}
+                    <div class="pagination">
+                        <span class="page-links">
+                            {% if page_obj.has_previous %}
+                                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                            {% endif %}
+                            <span class="page-current">
+                                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                            </span>
+                            {% if page_obj.has_next %}
+                                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                            {% endif %}
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
